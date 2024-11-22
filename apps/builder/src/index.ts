@@ -1,6 +1,9 @@
 import { createClient } from "redis";
 import { downloadProject, uploadProjectBuild } from "./storage";
 import { buildProject } from "./build";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const subscriber = createClient();
 
@@ -18,8 +21,8 @@ console.log("Connecting to Redis");
             }
 
             downloadProject(queueItem.element);
-            buildProject(queueItem.element);
-            uploadProjectBuild(queueItem.element);
+            // buildProject(queueItem.element);
+            // uploadProjectBuild(queueItem.element);
 
         } catch (error) {
             console.error("Error processing message:", error);
