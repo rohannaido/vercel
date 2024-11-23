@@ -20,9 +20,9 @@ console.log("Connecting to Redis");
                 continue;
             }
 
-            downloadProject(queueItem.element);
-            // buildProject(queueItem.element);
-            // uploadProjectBuild(queueItem.element);
+            await downloadProject(queueItem.element);
+            await buildProject(queueItem.element);
+            await uploadProjectBuild(queueItem.element);
 
         } catch (error) {
             console.error("Error processing message:", error);

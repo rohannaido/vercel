@@ -1,10 +1,10 @@
-import { S3Client, GetObjectCommand, GetObjectCommandOutput, ListObjectsCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand, PutObjectCommand, ListObjectsCommand } from "@aws-sdk/client-s3";
 import { join } from "path";
 import { cwd } from "process";
 import { createWriteStream } from "fs";
 import { mkdir } from "fs/promises";
 import { dirname } from "path";
-
+import { readdir, stat, readFile } from "fs/promises";
 const BUCKET_NAME = "my-vercel-project";
 const REGION = "ap-southeast-2";
 
@@ -63,5 +63,35 @@ export const downloadProject = async (projectId: string) => {
 };
 
 export const uploadProjectBuild = async (projectId: string) => {
-    console.log(`Uploading project ${projectId}`);
+    const client = new S3Client({
+        region: REGION,
+    });
+
+    const files = await getAllFiles(join(cwd(), `builds/${projectId}`));
+
+    for (const file of files) {
+        const uploadObjectCommand = new PutObjectCommand({
+            Bucket: BUCKET_NAME,
+            Key: file.slice(cwd().length + 1),
+            Body: await readFile(file),
+        });
+
+        await client.send(uploadObjectCommand);
+        console.log(`Uploaded ${file}`);
+    }
+};
+
+const getAllFiles = async (path: string) => {
+    const files = await readdir(path);
+    const result: string[] = [];
+    for (const file of files) {
+        const filePath = join(path, file);
+        const stats = await stat(filePath);
+        if (stats.isDirectory()) {
+            result.push(...(await getAllFiles(filePath)));
+        } else {
+            result.push(filePath);
+        }
+    }
+    return result;
 };
