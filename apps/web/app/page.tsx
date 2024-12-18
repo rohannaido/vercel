@@ -1,8 +1,8 @@
 "use client";
 
 import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
+import ApplicationBuilder from "../components/ApplicationBuilder";
 
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
@@ -21,26 +21,11 @@ const ThemeImage = (props: Props) => {
 };
 
 export default function Home() {
-  async function upload(formData: FormData) {
-
-    const repositoryUrl = formData.get("repositoryUrl");
-
-    if (!repositoryUrl) return;
-
-    await fetch("/api/upload", {
-      method: "POST",
-      body: JSON.stringify({ repositoryUrl }),
-    });
-  }
-
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
+    <div className="flex justify-center">
+      <main >
         <h1>Vercel 2.0</h1>
-        <form action={upload}>
-          <input type="url" name="repositoryUrl" />
-          <button type="submit">Upload</button>
-        </form>
+        <ApplicationBuilder />
       </main>
     </div>
   );
