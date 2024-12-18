@@ -6,11 +6,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const subscriber = createClient();
+const publisher = createClient();
 
 console.log("Connecting to Redis");
 
 (async () => {
     await subscriber.connect();
+    await publisher.connect();
 
     while (true) {
         try {
@@ -20,9 +22,14 @@ console.log("Connecting to Redis");
                 continue;
             }
 
-            await downloadProject(queueItem.element);
-            await buildProject(queueItem.element);
-            await uploadProjectBuild(queueItem.element);
+            const projectId = queueItem.element;
+
+            await downloadProject(projectId);
+            await buildProject(projectId);
+            await uploadProjectBuild(projectId);
+
+            await publisher.hSet("status", projectId, "build-complete");
+            publisher.publish(`deployment:${projectId}:builder:complete`, "DONE")
 
         } catch (error) {
             console.error("Error processing message:", error);

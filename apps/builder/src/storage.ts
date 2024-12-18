@@ -7,8 +7,14 @@ import { dirname } from "path";
 import { readdir, stat, readFile } from "fs/promises";
 const BUCKET_NAME = "my-vercel-project";
 const REGION = "ap-southeast-2";
+import { createClient } from "redis";
+const publisher = createClient();
 
 export const downloadProject = async (projectId: string) => {
+    if (!publisher.isOpen) {
+        await publisher.connect();
+    }
+
     const client = new S3Client({
         region: REGION,
     });
@@ -23,6 +29,9 @@ export const downloadProject = async (projectId: string) => {
     if (!Contents) {
         throw new Error("No contents found");
     }
+
+    let uploadedFiles = 0;
+    const totalFiles = Contents.length;
 
     for (const content of Contents) {
         console.log(content.Key);
@@ -59,15 +68,28 @@ export const downloadProject = async (projectId: string) => {
         writeStream.write(data);
 
         console.log(`Downloaded ${localFilePath}`);
+        await publisher.publish(`deployment:${projectId}:builder:download`, JSON.stringify({
+            file: localFilePath,
+            current: ++uploadedFiles,
+            total: totalFiles,
+            percentage: Math.round((uploadedFiles / totalFiles) * 100)
+        }));
     }
 };
 
 export const uploadProjectBuild = async (projectId: string) => {
+    if (!publisher.isOpen) {
+        publisher.connect();
+    }
+
     const client = new S3Client({
         region: REGION,
     });
 
     const files = await getAllFiles(join(cwd(), `builds/${projectId}`));
+
+    const totalFiles = files.length;
+    let uploadedFiles = 0;
 
     for (const file of files) {
         const uploadObjectCommand = new PutObjectCommand({
@@ -77,6 +99,13 @@ export const uploadProjectBuild = async (projectId: string) => {
         });
 
         await client.send(uploadObjectCommand);
+
+        publisher.publish(`deployment:${projectId}:builder:upload-output`, JSON.stringify({
+            file: file,
+            current: ++uploadedFiles,
+            total: totalFiles,
+            percentage: Math.round((uploadedFiles / totalFiles) * 100)
+        }))
         console.log(`Uploaded ${file}`);
     }
 };
