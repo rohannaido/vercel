@@ -38,7 +38,7 @@ app.prepare().then(() => {
                 socket.emit("builder:upload-output", JSON.parse(message));
             });
             await subscriber.pSubscribe(`deployment:${deploymentId}:builder:complete`, (message) => {
-                socket.emit("DONE")
+                socket.emit("DONE", JSON.parse(message));
             });
         })
 

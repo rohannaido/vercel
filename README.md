@@ -10,7 +10,7 @@ This Frontend deployement platform allows users to host their react frontend web
 ## Tech Stack
 
 - <b>Frontend/Backend:</b> Nextjs 15
-- <b>Database and Caching:</b> PostgreSQL, Redis
+- <b>Database and Caching:</b> PostgreSQL, Redis(Hash, List, Pub/Sub)
 - <b>UI Framework:</b> Tailwind Css
 
 ## Architecture
@@ -18,6 +18,8 @@ This Frontend deployement platform allows users to host their react frontend web
 - ### 3 microservices
     <b>Web:</b> 
     - Clones git repository URL provided by the user.
+    - Makes a Socket connection to frontend that is subscribed to Redis Pub/Sub.
+    - Publishes logs to Redis Pub/Sub.
     - Uploades code into AWS S3.
     - Sets current build status onto Redis hash.
     - After file upload pushes the id to Redis list.
@@ -28,6 +30,7 @@ This Frontend deployement platform allows users to host their react frontend web
     - Builds the application.
     - Uploads it back to S3.
     - Updates Redis hash with build complete.
+    - Publishes all logs and application URL to Redis Pub/Sub.
 
     <b>Request Handler:</b>
     - NodeJS Express server handles HTTP requests to the deployed websites.

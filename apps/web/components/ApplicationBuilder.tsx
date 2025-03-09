@@ -90,7 +90,7 @@ export default function ApplicationBuilder() {
             setUploadedFiles(prevUploadedFiles => [...prevUploadedFiles, data.file])
         });
         socket.on("DONE", (data) => {
-            setStatus("Project deployed!");
+            setStatus(`Project deployed! on ${data?.url}`);
         });
     }
 

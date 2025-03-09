@@ -29,7 +29,9 @@ console.log("Connecting to Redis");
             await uploadProjectBuild(projectId);
 
             await publisher.hSet("status", projectId, "build-complete");
-            publisher.publish(`deployment:${projectId}:builder:complete`, "DONE")
+            publisher.publish(`deployment:${projectId}:builder:complete`, JSON.stringify({
+                url: `http://${projectId}.localhost`,
+            }));
 
         } catch (error) {
             console.error("Error processing message:", error);
