@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { socket } from "@/lib/socket";
 import { string } from "zod";
+import Link from "next/link";
 
 export default function ApplicationBuilder() {
     const [isConnected, setIsConnected] = useState(false);
@@ -18,6 +19,7 @@ export default function ApplicationBuilder() {
     const [status, setStatus] = useState<null | string>(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+    const [deployUrl, setDeployUrl] = useState<string>("");
 
 
     useEffect(() => {
@@ -90,7 +92,8 @@ export default function ApplicationBuilder() {
             setUploadedFiles(prevUploadedFiles => [...prevUploadedFiles, data.file])
         });
         socket.on("DONE", (data) => {
-            setStatus(`Project deployed! on ${data?.url}`);
+            setStatus(`Project deployed!`);
+            setDeployUrl(data?.url);
         });
     }
 
@@ -103,6 +106,9 @@ export default function ApplicationBuilder() {
                     <Button>Upload</Button>
                 </div>
             </form>
+            <div>
+                {deployUrl && <>Project deployed at {<Link href={deployUrl}>{deployUrl}</Link>}</>}
+            </div>
             {
                 status && <>
                     <div>

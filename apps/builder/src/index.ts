@@ -30,7 +30,7 @@ console.log("Connecting to Redis");
 
             await publisher.hSet("status", projectId, "build-complete");
             publisher.publish(`deployment:${projectId}:builder:complete`, JSON.stringify({
-                url: `http://${projectId}.localhost`,
+                url: `http://${projectId}.localhost:4000`,
             }));
 
         } catch (error) {

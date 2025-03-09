@@ -28,14 +28,34 @@ app.get("/*", async (req: Request, res: Response) => {
 
         const data = await response.Body?.transformToString();
 
-        const contentType = filePath.endsWith(".css")
-            ? "text/css"
-            : filePath.endsWith(".js")
-                ? "application/javascript"
-                : "text/html";
+        let contentType;
+
+        switch (true) {
+            case filePath.endsWith(".css"):
+                contentType = "text/css";
+                break;
+            case filePath.endsWith(".js"):
+                contentType = "application/javascript";
+                break;
+            case filePath.endsWith(".png"):
+                contentType = "image/png";
+                break;
+            case filePath.endsWith(".svg"):
+                contentType = "image/svg+xml";
+                break;
+            default:
+                contentType = "text/html";
+        }
 
         res.setHeader("Content-Type", contentType);
-        res.send(data);
+
+        // Handle binary data properly for images
+        if (contentType.startsWith("image/")) {
+            const buffer = Buffer.from(data || '', "binary");
+            res.send(buffer);
+        } else {
+            res.send(data);
+        }
     } catch (error) {
         res.status(404).send("Not found");
     }

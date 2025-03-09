@@ -10,7 +10,7 @@ This Frontend deployement platform that builds, displays realtime build logs and
 ## Tech Stack
 
 - <b>Frontend/Backend:</b> Nextjs 15
-- <b>Database and Caching:</b> PostgreSQL, Redis(Hash, List, Pub/Sub)
+- <b>Storage and Caching:</b> Redis(Hash, List, Pub/Sub)
 - <b>UI Framework:</b> Tailwind Css
 
 ## Architecture
@@ -36,4 +36,30 @@ This Frontend deployement platform that builds, displays realtime build logs and
     - NodeJS Express server handles HTTP requests to the deployed websites.
     - Based on the website URL server the distribution file of the deployed websites.
 
+## Local Setup
 
+1. Clone the repository
+2. Install Dependencies
+    ```bash
+    npm run dev
+    ```
+3. Setup Redis using docker
+    ```bash
+    docker run --name redis-server -d -p 6379:6379 redis
+    ```
+4. Copy the .env.example file to .env in apps/web/, apps/builder/ and apps/request-handler/ directories.
+5. Open the .env files and update your AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+
+## Project
+
+1. Git URL Input and upload
+![Git URL Input and upload](docs/images/vercel-project-screenshot-1.png)
+
+2. Build logs
+![Git URL Input and upload](docs/images/vercel-project-screenshot-2.png)
+
+3. Deployment link
+![Git URL Input and upload](docs/images/vercel-project-screenshot-3.png)
+
+4. Deployed website
+![Git URL Input and upload](docs/images/vercel-project-screenshot-4.png)
