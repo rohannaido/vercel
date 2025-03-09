@@ -1,6 +1,6 @@
 # Vercel Clone - Frontend Deployment platform
 
-This Frontend deployement platform that builds, displays realtime build logs and hosts React frontend application. It takes the users' frontend public gitHub repository link and clones the source code, builds the application and generates a unique URL for the website.
+This Frontend deployement platform that <b>builds, displays real-time build logs and hosts React frontend application</b>. It takes the users' frontend public gitHub repository link and clones the source code, builds the application and generates a unique URL for the website.
 
 ## Features
 
@@ -52,10 +52,10 @@ This Frontend deployement platform that builds, displays realtime build logs and
 
 ## Project
 
-1. Git URL Input and upload
+1. Git URL Input and uploading project files (real-time logs)
 ![Git URL Input and upload](docs/images/vercel-project-screenshot-1.png)
 
-2. Build logs
+2. Build logs (real-time)
 ![Git URL Input and upload](docs/images/vercel-project-screenshot-2.png)
 
 3. Deployment link
